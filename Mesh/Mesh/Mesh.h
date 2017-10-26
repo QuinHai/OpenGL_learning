@@ -11,6 +11,7 @@
 
 using namespace std;
 
+
 struct Vertex
 {
 	glm::vec3 Position;
@@ -24,13 +25,14 @@ struct Texture
 {
 	GLuint id;
 	std::string type;
+	aiScene path;
 };
 
 class Mesh
 {
-private:
-	GLuint VAO, VBO, EBO;
 public:
+	GLuint VAO, VBO, EBO;
+
 	/*Íø¸ñÊý¾Ý*/
 	vector<Vertex> vertices;
 	vector<GLuint> indices;
