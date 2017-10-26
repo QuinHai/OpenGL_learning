@@ -54,7 +54,7 @@ public:
 		return glm::lookAt(Position, Position + Front, Up);
 	}
 
-	void ProcessKeybroad(Camera_Movement direction, float deltaTime) {
+	void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 		float velocity = MovementSpeed * deltaTime;//ËÙÂÊ
 		glm::vec3 fps_Front = Front;
 		fps_Front.y = 0;
