@@ -1,13 +1,22 @@
 #pragma once
-#include <iostream>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <glad/glad.h>
+
 #include <vector>
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
+#include <fstream>
 #include <sstream>
+#include <cstdio>
+#include <cstddef>
 #include "Shader.h"
+
+//#define offsetof(s, m)   (size_t)&(((s *)0)->m)
 
 using namespace std;
 
