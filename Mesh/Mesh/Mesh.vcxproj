@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EFF0A75E-FCBB-4C72-A187-034843AFA42A}</ProjectGuid>
     <RootNamespace>Mesh</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -129,13 +129,42 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\container2.png" />
-    <Image Include="resources\container2_specular.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="assimp-vc140-mt.dll" />
     <None Include="resources\flampshader.glsl" />
     <None Include="resources\fshader.glsl" />
+    <None Include="resources\nanosuit\nanosuit.blend" />
+    <None Include="resources\nanosuit\nanosuit.mtl" />
     <None Include="resources\vshader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="assimp-vc140-mt.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\nanosuit\arm_dif.png" />
+    <Image Include="resources\nanosuit\arm_showroom_ddn.png" />
+    <Image Include="resources\nanosuit\arm_showroom_spec.png" />
+    <Image Include="resources\nanosuit\body_dif.png" />
+    <Image Include="resources\nanosuit\body_showroom_ddn.png" />
+    <Image Include="resources\nanosuit\body_showroom_spec.png" />
+    <Image Include="resources\nanosuit\glass_ddn.png" />
+    <Image Include="resources\nanosuit\glass_dif.png" />
+    <Image Include="resources\nanosuit\hand_dif.png" />
+    <Image Include="resources\nanosuit\hand_showroom_ddn.png" />
+    <Image Include="resources\nanosuit\hand_showroom_spec.png" />
+    <Image Include="resources\nanosuit\helmet_diff.png" />
+    <Image Include="resources\nanosuit\helmet_showroom_ddn.png" />
+    <Image Include="resources\nanosuit\helmet_showroom_spec.png" />
+    <Image Include="resources\nanosuit\leg_dif.png" />
+    <Image Include="resources\nanosuit\leg_showroom_ddn.png" />
+    <Image Include="resources\nanosuit\leg_showroom_spec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="resources\nanosuit\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="resources\nanosuit\nanosuit.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

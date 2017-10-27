@@ -1,130 +1,140 @@
 #pragma once
+#include <glad/glad.h> // holds all OpenGL type declarations
+
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <glad/glad.h>
+#include "Shader.h"
 
-#include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <cstdio>
-#include <cstddef>
-#include "Shader.h"
-
-//#define offsetof(s, m)   (size_t)&(((s *)0)->m)
+#include <iostream>
+#include <vector>
 
 using namespace std;
 
-
-struct Vertex
-{
+struct Vertex {
+	// position
 	glm::vec3 Position;
+	// normal
 	glm::vec3 Normal;
+	// texCoords
 	glm::vec2 TexCoords;
+	// tangent
 	glm::vec3 Tangent;
+	// bitangent
 	glm::vec3 Bitangent;
 };
 
-struct Texture
-{
-	GLuint id;
-	std::string type;
-	aiString path; // 我们储存纹理的路径用于与其它纹理进行比较
+struct Texture {
+	unsigned int id;
+	string type;
+	aiString path;
 };
 
-class Mesh
-{
+class Mesh {
 public:
-	GLuint VAO, VBO, EBO;
-
-	/*网格数据*/
+	/*  Mesh Data  */
 	vector<Vertex> vertices;
-	vector<GLuint> indices;
+	vector<unsigned int> indices;
 	vector<Texture> textures;
+	unsigned int VAO;
 
-public:
-	/*函数*/
-	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures)
+	/*  Functions  */
+	// constructor
+	Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
 
+		// now that we have all the required data, set the vertex buffers and its attribute pointers.
 		setupMesh();
 	}
+
+	// render the mesh
 	void Draw(Shader shader)
 	{
-		GLuint diffuseNr = 1;
-		GLuint specularNr = 1;
-		GLuint normalNr = 1;
-		GLuint heightNr = 1;
-		for (int i = 0; i < textures.size(); i++)
+		// bind appropriate textures
+		unsigned int diffuseNr = 1;
+		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
+		for (unsigned int i = 0; i < textures.size(); i++)
 		{
-			glActiveTexture(GL_TEXTURE0 + i);//绑定之前激活纹理单元
-			
+			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+											  // retrieve texture number (the N in diffuse_textureN)
 			stringstream ss;
 			string number;
 			string name = textures[i].type;
 			if (name == "texture_diffuse")
-				ss << diffuseNr++;
+				ss << diffuseNr++; // transfer unsigned int to stream
 			else if (name == "texture_specular")
-				ss << specularNr++;
+				ss << specularNr++; // transfer unsigned int to stream
 			else if (name == "texture_normal")
-				ss << normalNr++;
+				ss << normalNr++; // transfer unsigned int to stream
 			else if (name == "texture_height")
-				ss << heightNr++;
+				ss << heightNr++; // transfer unsigned int to stream
 			number = ss.str();
-			shader.setFloat(("material." + name + number).c_str(), i);
+			// now set the sampler to the correct texture unit
+			glUniform1i(glGetUniformLocation(shader.shaderProgram, (name + number).c_str()), i);
+			// and finally bind the texture
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
-		
 
-		//绘制网格
+		// draw mesh
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-		
-		// always good practice to set everything back to defaults once configured.
 		glBindVertexArray(0);
+
+		// always good practice to set everything back to defaults once configured.
 		glActiveTexture(GL_TEXTURE0);
 	}
 
 private:
+	/*  Render data  */
+	unsigned int VBO, EBO;
+
+	/*  Functions    */
+	// initializes all the buffer objects/arrays
 	void setupMesh()
 	{
+		// create buffers/arrays
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
 
 		glBindVertexArray(VAO);
-		
+		// load data into vertex buffers
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		// A great thing about structs is that their memory layout is sequential for all its items.
+		// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
+		// again translates to 3/2 floats which translates to a byte array.
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
+		// set the vertex attribute pointers
+		// vertex Positions
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
+		// vertex normals
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-
+		// vertex texture coords
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-
+		// vertex tangent
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-
+		// vertex bitangent
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
-		
+
 		glBindVertexArray(0);
 	}
-
 };
-
