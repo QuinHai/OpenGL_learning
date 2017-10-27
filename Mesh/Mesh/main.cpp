@@ -109,8 +109,7 @@ int main()
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+
 	glfwTerminate();
 	//system("pause");
 	return 0;

@@ -25,7 +25,7 @@ struct Texture
 {
 	GLuint id;
 	std::string type;
-	aiScene path;
+	aiString path; // 我们储存纹理的路径用于与其它纹理进行比较
 };
 
 class Mesh
